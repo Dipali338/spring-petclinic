@@ -19,7 +19,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
 		script {
-                	dockerImage = docker.build("${DOCKER_IMAGE}")
+			sh 'ls -l target'
+                	def dockerImage = docker.build("${DOCKER_IMAGE")
             }
         }
      }
@@ -27,7 +28,7 @@ pipeline {
             steps {
 		script {
 		docker.withRegistry('https://index.docker.io/v1', "${DOCKERHUB_CREDENTIALS}"){
-		dockerImage.push('latest')
+		docker.image("dipali338/spring-petclinic").push("latest")
 		   }
                 }
             }
@@ -45,4 +46,3 @@ pipeline {
         }
     }
 }
-
