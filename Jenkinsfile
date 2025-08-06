@@ -20,7 +20,7 @@ pipeline {
             steps {
 		script {
 			sh 'ls -l target'
-                	def dockerImage = docker.build("${DOCKER_IMAGE")
+                	def dockerImage = docker.build"${DOCKER_IMAGE}"
             }
         }
      }
