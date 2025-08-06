@@ -2,12 +2,15 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = 'docker-hub-creds'
-    }
+	DOCKER_IMAGE = 'dipalikhandait1234/spirng-petclinic'
+	GITHUB_CREDENTIALS = 'github-creds'
+}
+   
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', 
-                    credentialsId: 'github-creds', 
+                    credentialsId: "${GITHUB_CREDENTIALS}", 
                     url: 'https://github.com/Dipali338/spring-petclinic.git'
             }
         }
@@ -15,15 +18,17 @@ pipeline {
         // Continue with your other stages
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t spring-petclinic-app .'
+		script {
+                	dockerImage = docker.build("${DOCKER_IMAGE}")
             }
         }
-
+     }
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([ credentialsId: "${DOCKERHUB_CREDENTIALS}" ]) {
-                    sh 'docker tag spring-petclinic-app dipalikhandait1234/spring-petclinic-app:latest'
-                    sh 'docker push dipalikhandait1234/spring-petclinic-app:latest'
+		script {
+		docker.withRegistry('https://index.docker.io/v1', "${DOCKERHUB_CREDENTIALS}"){
+		dockerImage.push('latest')
+		   }
                 }
             }
         }
